@@ -3,30 +3,11 @@
     <div class="calculator-container">
         <div class="calculator_body">
           <div class="calculator_body_answer">
-            <div class="answer_history">23+45-34</div>
-            <div class="answer_value">500</div>
+            <div class="answer_history">{{history}}</div>
+            <div class="answer_value">{{answer}}</div>
           </div>
           <div class="calculator_body_keys">
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
-            <div class="body_key">4</div>
+            <div class="body_key" v-for="key in keys" :key="key" @click="addAnswer(key)">{{ key }}</div>
           </div>
         </div>
     </div>
@@ -37,7 +18,39 @@
 
 export default {
   name: 'App',
-  components: {
+  data(){
+    return{
+      keys: ['C', '<=', '%', '/', '7', '8', '9', '*', '4', '5', '6', '-', '1', '2', '3', '+', '00', '0', ',', '='],
+      answer : '',
+      history: null
+    }
+  },
+  methods: {
+    addAnswer(num){
+      if(num == '='){
+        this.answerValue()
+      }else if(num == 'C'){
+        this.answer = ''
+        this.history = ''
+      }else if(num == '<='){
+        this.answer = this.answer.slice(0, -1)
+      }else if(num == ','){
+        this.answer += '.'
+      }else{
+        this.answer += num
+      }
+    },  
+    answerValue(){
+      this.history = this.answer;
+      let answers = eval(this.answer)
+      const f = x => ( (x.toString().includes('.')) ? (x.toString().split('.').pop().length) : (0) );
+      this.answer = f(answers)
+      if(f(answers) == 0){
+        this.answer = answers
+      }else{
+        this.answer = answers.toFixed(2)
+      }
+    }
   }
 }
 </script>
@@ -75,6 +88,7 @@ body{
 .calculator_body_answer {
   text-align: right;
   border-bottom: 2px solid #fff;
+  /* transition: all .3s ease; */
 }
 /* .calculator_body_answer::before{
   cont
@@ -87,6 +101,7 @@ body{
 .answer_value {
   font-size: 56px;
   margin-bottom: 20px;
+  transition: all .3s ease;
 }
 .calculator_body_keys {
   display: flex;
